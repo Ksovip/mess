@@ -3,17 +3,17 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Meta Icon Style Chat System</title>
+    <title>Meta Messenger Pro</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            font-family: 'Segoe UI', -apple-system, BlinkMacSystemFont, Roboto, sans-serif;
         }
 
         body {
-            background-color: #f0f2f5;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             display: flex;
             justify-content: center;
             align-items: center;
@@ -21,18 +21,19 @@
         }
 
         .container {
-            width: 400px;
-            height: 600px;
+            width: 420px;
+            height: 680px;
             background: #ffffff;
-            border-radius: 12px;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            border-radius: 20px;
+            box-shadow: 0 12px 28px rgba(0, 0, 0, 0.12);
             overflow: hidden;
             display: flex;
             flex-direction: column;
+            position: relative;
         }
 
         .screen {
-            padding: 25px;
+            padding: 20px;
             display: flex;
             flex-direction: column;
             height: 100%;
@@ -40,25 +41,46 @@
 
         h2, h3 {
             margin-bottom: 20px;
-            color: #1877f2;
+            color: #0084FF;
             text-align: center;
+            font-weight: 700;
         }
 
-        /* Meta Dynamic Avatar Style */
+        /* Premium Meta Avatar Style */
+        .avatar-wrapper {
+            position: relative;
+            display: inline-block;
+            flex-shrink: 0;
+        }
+
         .meta-avatar {
-            width: 40px;
-            height: 40px;
-            background: linear-gradient(135deg, #0084FF, #1877f2);
+            width: 44px;
+            height: 44px;
+            background: linear-gradient(135deg, #00c6ff, #0072ff);
             color: white;
             border-radius: 50%;
             display: flex;
             align-items: center;
             justify-content: center;
             font-weight: bold;
-            font-size: 16px;
+            font-size: 18px;
             text-transform: uppercase;
-            box-shadow: 0 2px 5px rgba(24, 119, 242, 0.2);
-            flex-shrink: 0;
+        }
+
+        .online-dot {
+            width: 12px;
+            height: 12px;
+            background-color: #31a24c;
+            border: 2px solid white;
+            border-radius: 50%;
+            position: absolute;
+            bottom: 2px;
+            right: 2px;
+            display: none;
+        }
+
+        .online-dot.active {
+            display: block;
         }
 
         .input-group {
@@ -67,60 +89,70 @@
 
         .input-group label {
             display: block;
-            margin-bottom: 5px;
-            font-size: 14px;
+            margin-bottom: 6px;
+            font-size: 13px;
+            font-weight: 600;
             color: #65676b;
         }
 
         .input-group input {
             width: 100%;
-            padding: 12px;
+            padding: 12px 16px;
             border: 1px solid #ced4da;
-            border-radius: 8px;
+            border-radius: 10px;
             outline: none;
+            transition: 0.2s;
+            font-size: 15px;
+        }
+
+        .input-group input:focus {
+            border-color: #0084FF;
+            box-shadow: 0 0 0 2px rgba(0,132,255,0.2);
         }
 
         .action-btn {
-            background: #1877f2;
+            background: #0084FF;
             color: white;
             border: none;
-            padding: 12px;
-            border-radius: 8px;
+            padding: 14px;
+            border-radius: 10px;
             font-weight: bold;
             cursor: pointer;
             font-size: 16px;
+            transition: 0.2s;
         }
+
+        .action-btn:hover { background: #006dd2; }
 
         .switch-link {
             text-align: center;
             margin-top: 20px;
             font-size: 14px;
-            color: #1877f2;
-            text-decoration: underline;
+            color: #0084FF;
             cursor: pointer;
         }
 
-        /* Search Box */
+        /* Search & Lists */
         .search-box input {
             width: 100%;
-            padding: 12px;
-            border: 1px solid #ced4da;
+            padding: 10px 16px;
+            border: none;
             border-radius: 20px;
             outline: none;
             background: #f0f2f5;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
+            font-size: 14px;
         }
 
-        /* Request Section */
-        .request-section {
-            margin-bottom: 15px;
-            background: #e7f3ff;
-            padding: 10px;
-            border-radius: 8px;
-            display: none;
+        .section-title {
+            font-size: 13px;
+            color: #65676b;
+            font-weight: bold;
+            margin: 10px 0 8px 0;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
         }
 
-        /* Friend List UI */
         .friend-list {
             flex: 1;
             overflow-y: auto;
@@ -133,68 +165,103 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 10px;
-            background: #f0f2f5;
-            border-radius: 8px;
-            gap: 12px;
+            padding: 10px 12px;
+            background: #f8f9fa;
+            border-radius: 12px;
+            transition: 0.2s;
+            cursor: pointer;
         }
+
+        .friend-item:hover { background: #f0f2f5; }
 
         .user-info-block {
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
+            flex: 1;
+            min-width: 0;
+        }
+
+        .text-details {
+            display: flex;
+            flex-direction: column;
+            flex: 1;
+            min-width: 0;
         }
 
         .friend-name {
-            font-weight: bold;
+            font-weight: 600;
             color: #050505;
-            text-transform: capitalize;
+            font-size: 15px;
+        }
+
+        .last-msg-preview {
+            font-size: 12px;
+            color: #65676b;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+            margin-top: 2px;
         }
 
         .chat-link-btn {
-            background: #1877f2;
+            background: #e7f3ff;
             border: none;
-            padding: 6px 12px;
-            border-radius: 15px;
+            padding: 8px 14px;
+            border-radius: 20px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            color: white;
+            color: #0084FF;
+            transition: 0.2s;
+        }
+
+        .chat-link-btn:hover { background: #dbe7f5; }
+
+        /* Request Notification */
+        .request-section {
+            background: #e7f3ff;
+            padding: 12px;
+            border-radius: 12px;
+            margin-bottom: 15px;
+            display: none;
         }
 
         /* Chat Screen */
         .chat-header {
             background: #ffffff;
-            padding: 10px 15px;
+            padding: 12px 16px;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 12px;
             border-bottom: 1px solid #e4e6eb;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.04);
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: #1877f2;
-            font-size: 16px;
-            font-weight: bold;
+            color: #0084FF;
+            font-size: 20px;
             cursor: pointer;
+            padding-right: 5px;
         }
 
         .chat-messages {
             flex: 1;
-            padding: 15px;
+            padding: 16px;
             overflow-y: auto;
             display: flex;
             flex-direction: column;
-            gap: 12px;
+            gap: 14px;
+            background: #ffffff;
         }
 
-        /* Message Bubble with Avatar */
+        /* Chat Bubbles with Timestamps */
         .message-row {
             display: flex;
             gap: 8px;
-            max-width: 85%;
+            max-width: 80%;
             align-items: flex-end;
         }
 
@@ -203,15 +270,16 @@
             flex-direction: row-reverse;
         }
 
-        .message-row.received {
-            align-self: flex-start;
+        .message-row.received { align-self: flex-start; }
+        .message-row .meta-avatar { width: 28px; height: 28px; font-size: 12px; }
+
+        .bubble-wrapper {
+            display: flex;
+            flex-direction: column;
         }
 
-        .message-row .meta-avatar {
-            width: 28px;
-            height: 28px;
-            font-size: 12px;
-        }
+        .sent .bubble-wrapper { align-items: flex-end; }
+        .received .bubble-wrapper { align-items: flex-start; }
 
         .message-text {
             padding: 10px 14px;
@@ -220,24 +288,33 @@
             word-wrap: break-word;
         }
 
-        .sent .message-text { background: #1877f2; color: white; border-bottom-right-radius: 4px; }
+        .sent .message-text { background: #0084FF; color: white; border-bottom-right-radius: 4px; }
         .received .message-text { background: #e4e6eb; color: black; border-bottom-left-radius: 4px; }
 
+        .msg-time {
+            font-size: 10px;
+            color: #8a8d91;
+            margin-top: 3px;
+            padding: 0 4px;
+        }
+
         .chat-input-area {
-            padding: 12px;
+            padding: 14px;
             display: flex;
             align-items: center;
             gap: 10px;
             border-top: 1px solid #e4e6eb;
+            background: #ffffff;
         }
 
         .chat-input {
             flex: 1;
-            padding: 10px 15px;
+            padding: 12px 16px;
             border: none;
             background: #f0f2f5;
-            border-radius: 20px;
+            border-radius: 24px;
             outline: none;
+            font-size: 14px;
         }
     </style>
 </head>
@@ -245,25 +322,27 @@
 
     <div class="container">
         
+        <!-- ၁။ LOG IN SCREEN -->
         <div id="loginScreen" class="screen">
-            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
-                <div class="meta-avatar" style="width: 60px; height: 60px; font-size: 24px;">M</div>
+            <div style="display: flex; justify-content: center; margin-top: 40px; margin-bottom: 20px;">
+                <div class="meta-avatar" style="width: 70px; height: 70px; font-size: 32px;">M</div>
             </div>
-            <h2>Meta Chat</h2>
+            <h2>Meta Messenger</h2>
             <div class="input-group">
                 <label>အသုံးပြုသူအမည် (Username)</label>
-                <input type="text" id="loginUser" placeholder="Username">
+                <input type="text" id="loginUser" placeholder="Username ရိုက်ပါ">
             </div>
             <div class="input-group">
                 <label>လျှို့ဝှက်နံပါတ် (Password)</label>
                 <input type="password" id="loginPass" placeholder="******">
             </div>
-            <button class="action-btn" onclick="loginProcess()">Log In ဝင်မည်</button>
-            <div class="switch-link" onclick="showScreen('registerScreen')">အကောင့်အသစ်ဖွင့်ရန် နှိပ်ပါ</div>
+            <button class="action-btn" onclick="loginProcess()">အကောင့်ဝင်မည်</button>
+            <div class="switch-link" onclick="showScreen('registerScreen')">အကောင့်အသစ်ဆောက်ရန် နှိပ်ပါ</div>
         </div>
 
+        <!-- ၂။ REGISTER SCREEN -->
         <div id="registerScreen" class="screen" style="display: none;">
-            <h2>အကောင့်အသစ်ဖွင့်ပါ</h2>
+            <h2>အကောင့်သစ်ဖွင့်ခြင်း</h2>
             <div class="input-group">
                 <label>အသုံးပြုသူအမည်သစ် (New Username)</label>
                 <input type="text" id="regUser" placeholder="ဥပမာ - koko, susu">
@@ -272,54 +351,83 @@
                 <label>လျှို့ဝှက်နံပါတ် (Password)</label>
                 <input type="password" id="regPass" placeholder="******">
             </div>
-            <button class="action-btn" style="background: #22c55e;" onclick="registerProcess()">အကောင့်သစ်ဆောက်မည်</button>
-            <div class="switch-link" onclick="showScreen('loginScreen')">အကောင့်ရှိပြီးသားမို့ Log In ပြန်ဝင်ရန်</div>
+            <button class="action-btn" style="background: #24b659;" onclick="registerProcess()">အကောင့်သစ်သိမ်းမည်</button>
+            <div class="switch-link" onclick="showScreen('loginScreen')">အကောင့်ရှိပြီးသားမို့ ပြန်ဝင်ရန်</div>
         </div>
 
-        <div id="mainScreen" class="screen" style="display: none; padding: 15px;">
-            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+        <!-- ၃။ MAIN MENU SCREEN -->
+        <div id="mainScreen" class="screen" style="display: none;">
+            <!-- Header Profile -->
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px; background: #f8f9fa; padding: 10px; border-radius: 12px;">
                 <div class="user-info-block">
-                    <div class="meta-avatar" id="myMetaAvatar" style="width:32px; height:32px; font-size:14px;"></div>
-                    <span id="userBadge" style="font-weight:bold; color:#65676b;"></span>
+                    <div class="avatar-wrapper">
+                        <div class="meta-avatar" id="myMetaAvatar" style="width:36px; height:36px; font-size:16px;"></div>
+                        <div class="online-dot active"></div>
+                    </div>
+                    <span id="userBadge" style="font-weight:bold; color:#050505; text-transform: capitalize;"></span>
                 </div>
-                <button onclick="logoutProcess()" style="border:none; background:none; color:red; cursor:pointer; font-weight:bold;">ထွက်မည်</button>
+                <button onclick="logoutProcess()" style="border:none; background:none; color:#f02849; cursor:pointer; font-weight:bold; font-size:14px;">ထွက်မည်</button>
             </div>
 
+            <!-- Friend Requests Area -->
             <div class="request-section" id="reqSection">
-                <h4 style="font-size:13px; color:#1877f2; margin-bottom:8px;">Friend Requests</h4>
-                <div id="incomingReqList"></div>
+                <div class="section-title" style="color:#0084FF; margin-top:0;">မိတ်ဆွေတောင်းဆိုမှုများ</div>
+                <div id="incomingReqList" style="display:flex; flex-direction:column; gap:6px;"></div>
             </div>
             
-            <h3>သူငယ်ချင်း ရှာဖွေရန်</h3>
-            <div class="search-box">
-                <input type="text" id="searchBar" placeholder="နာမည်ရိုက်ရှာပါ..." oninput="renderSearchFriends()">
-            </div>
+            <!-- Chat List (အမြဲပေါ်နေမည့် လက်ခံပြီးသားသူငယ်ချင်းများ) -->
+            <div class="section-title">ချက်တင်များ (Chats)</div>
+            <div class="friend-list" id="acceptedFriendsContainer" style="max-height: 240px;"></div>
 
-            <div class="friend-list" id="searchResultContainer"></div>
+            <!-- ရှာဖွေရေးစာရင်း (ရိုက်ရှာမှ ပေါ်မည်) -->
+            <div class="section-title" style="margin-top:15px;">သူငယ်ချင်းအသစ်ရှာရန်</div>
+            <div class="search-box">
+                <input type="text" id="searchBar" placeholder="🔍 နာမည်အပြည့်အစုံဖြင့် ရှာဖွေပါ..." oninput="renderSearchFriends()">
+            </div>
+            <div class="friend-list" id="searchResultContainer" style="max-height: 150px;"></div>
         </div>
 
+        <!-- ၄။ PRIVATE CHAT SCREEN -->
         <div id="chatScreen" class="screen" style="display: none; padding: 0;">
             <div class="chat-header">
-                <button class="back-btn" onclick="backToMain()">⬅</button>
-                <div class="meta-avatar" id="chatHeaderAvatar" style="width:35px; height:35px; font-size:15px;"></div>
-                <div style="font-weight: bold; font-size: 16px; flex: 1;" id="chatTitle">သူငယ်ချင်းအမည်</div>
+                <button class="back-btn" onclick="backToMain()"> Ler </button>
+                <div class="avatar-wrapper">
+                    <div class="meta-avatar" id="chatHeaderAvatar" style="width:38px; height:38px; font-size:16px;"></div>
+                    <div class="online-dot" id="chatHeaderOnlineDot"></div>
+                </div>
+                <div style="font-weight: bold; font-size: 16px; flex: 1; text-transform: capitalize;" id="chatTitle">သူငယ်ချင်း</div>
             </div>
             <div class="chat-messages" id="chatBox"></div>
             <div class="chat-input-area">
-                <input type="text" class="chat-input" id="msgInput" placeholder="စာရိုက်ပါ..." onkeypress="checkEnter(event)">
-                <button class="back-btn" onclick="sendMsg()">ပို့မည်</button>
+                <input type="text" class="chat-input" id="msgInput" placeholder="Aa စာရိုက်ပါ..." onkeypress="checkEnter(event)">
+                <button class="back-btn" style="padding:0 5px; font-size:16px;" onclick="sendMsg()">ပို့မည်</button>
             </div>
         </div>
 
     </div>
 
     <script>
-        let userDatabase = JSON.parse(localStorage.getItem('fb_users')) || [];
-        let chatDatabase = JSON.parse(localStorage.getItem('fb_chats')) || [];
-        let friendDatabase = JSON.parse(localStorage.getItem('fb_friends')) || [];
-        
+        // Database စနစ်သတ်မှတ်ခြင်း
+        let userDatabase = JSON.parse(localStorage.getItem('meta_users')) || [];
+        let chatDatabase = JSON.parse(localStorage.getItem('meta_chats')) || [];
+        let friendDatabase = JSON.parse(localStorage.getItem('meta_friends')) || [];
+        let activeSessions = JSON.parse(localStorage.getItem('meta_sessions')) || {}; // အွန်လိုင်းစစ်ရန်
+
         let currentActiveUser = null;
         let currentChatFriend = null;
+
+        // အချိန်ပုံစံပြောင်းလဲပေးသည့် လုပ်ဆောင်ချက် (ဥပမာ- 12:45 PM)
+        function formatTime(timestamp) {
+            if(!timestamp) return "";
+            const date = new Date(timestamp);
+            let hours = date.getHours();
+            let minutes = date.getMinutes();
+            const ampm = hours >= 12 ? 'PM' : 'AM';
+            hours = hours % 12;
+            hours = hours ? hours : 12; 
+            minutes = minutes < 10 ? '0'+minutes : minutes;
+            return hours + ':' + minutes + ' ' + ampm;
+        }
 
         function showScreen(screenId) {
             document.getElementById('loginScreen').style.display = "none";
@@ -332,12 +440,12 @@
         function registerProcess() {
             const uName = document.getElementById('regUser').value.trim().toLowerCase();
             const pWord = document.getElementById('regPass').value.trim();
-            if(!uName || !pWord) return alert("အချက်အလက် ဖြည့်စွက်ပါ!");
-            if(userDatabase.some(user => user.username === uName)) return alert("ဒီနာမည် ရှိပြီးသားပါ။");
+            if(!uName || !pWord) return alert("အချက်အလက်များကို ပြည့်စုံစွာ ဖြည့်ပါ။");
+            if(userDatabase.some(user => user.username === uName)) return alert("ဤအမည်ဖြင့် အကောင့်ရှိပြီးသား ဖြစ်သည်။");
 
             userDatabase.push({ username: uName, password: pWord });
-            localStorage.setItem('fb_users', JSON.stringify(userDatabase));
-            alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါပြီ။");
+            localStorage.setItem('meta_users', JSON.stringify(userDatabase));
+            alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါသည်။");
             document.getElementById('regUser').value = "";
             document.getElementById('regPass').value = "";
             showScreen('loginScreen');
@@ -350,32 +458,115 @@
 
             if(foundUser) {
                 currentActiveUser = uName;
+                
+                // အွန်လိုင်းစတေးတပ်စ်ကို Update လုပ်ခြင်း
+                activeSessions[uName] = Date.now();
+                localStorage.setItem('meta_sessions', JSON.stringify(activeSessions));
+
                 document.getElementById('userBadge').innerText = uName;
-                document.getElementById('myMetaAvatar').innerText = uName.charAt(0); // ကိုယ့် Icon အတွက် ပထမစာလုံးယူမယ်
+                document.getElementById('myMetaAvatar').innerText = uName.charAt(0);
                 document.getElementById('searchBar').value = ""; 
                 showScreen('mainScreen');
-                checkIncomingRequests();
-                renderSearchFriends();
+                
+                refreshAllData();
             } else {
-                alert("အမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။");
+                alert("အသုံးပြုသူအမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။");
             }
         }
 
-        // ရှာဖွေသည့်စနစ် (လူတိုင်းမှာ Icon ပါမည်)
+        // Home စာမျက်နှာကို အလိုအလျောက် Update လုပ်ပေးမည့်စနစ်
+        function refreshAllData() {
+            if (!currentActiveUser) return;
+            
+            // Session သက်တမ်းတိုးပေးခြင်း (မိမိ အွန်လိုင်းဖြစ်နေကြောင်းပြရန်)
+            activeSessions = JSON.parse(localStorage.getItem('meta_sessions')) || {};
+            activeSessions[currentActiveUser] = Date.now();
+            localStorage.setItem('meta_sessions', JSON.stringify(activeSessions));
+
+            friendDatabase = JSON.parse(localStorage.getItem('meta_friends')) || [];
+            chatDatabase = JSON.parse(localStorage.getItem('meta_chats')) || [];
+
+            checkIncomingRequests();
+            renderAcceptedFriends();
+            if(document.getElementById('chatScreen').style.display === "flex") {
+                renderPrivateChats();
+            }
+        }
+
+        // တစ်ဖက်လူ အွန်လိုင်းရှိမရှိ စစ်ဆေးခြင်း (နောက်ဆုံးလှုပ်ရှားမှု ၃ မိနစ်အတွင်းဆိုလျှင် Online)
+        function isUserOnline(username) {
+            const sessions = JSON.parse(localStorage.getItem('meta_sessions')) || {};
+            if (sessions[username]) {
+                const diff = Date.now() - sessions[username];
+                return diff < 180000; // 3 minutes
+            }
+            return false;
+        }
+
+        // ချက်တင်စာရင်းပြသခြင်း (နောက်ဆုံးစာ Preview စနစ်ပါဝင်သည်)
+        function renderAcceptedFriends() {
+            const container = document.getElementById('acceptedFriendsContainer');
+            container.innerHTML = "";
+
+            const myFriends = friendDatabase.filter(f => 
+                f.status === 'accepted' && (f.from === currentActiveUser || f.to === currentActiveUser)
+            );
+
+            if(myFriends.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#65676b; font-size:13px; padding:20px;">စကားပြောထားသော သူငယ်ချင်းမရှိသေးပါ။</div>`;
+                return;
+            }
+
+            myFriends.forEach(rel => {
+                const friendName = rel.from === currentActiveUser ? rel.to : rel.from;
+                
+                // နောက်ဆုံးပြောထားသောစာကို ရှာဖွေခြင်း
+                const relationChats = chatDatabase.filter(msg => 
+                    (msg.sender === currentActiveUser && msg.receiver === friendName) ||
+                    (msg.sender === friendName && msg.receiver === currentActiveUser)
+                );
+                
+                let lastMsgText = "မက်ဆေ့ခ်ျမရှိသေးပါ။";
+                let lastMsgTime = "";
+                if(relationChats.length > 0) {
+                    const lastChat = relationChats[relationChats.length - 1];
+                    lastMsgText = (lastChat.sender === currentActiveUser ? "သင်: " : "") + lastChat.text;
+                    lastMsgTime = formatTime(lastChat.timestamp);
+                }
+
+                const onlineClass = isUserOnline(friendName) ? "active" : "";
+
+                container.innerHTML += `
+                    <div class="friend-item" onclick="startChatWith('${friendName}')">
+                        <div class="user-info-block">
+                            <div class="avatar-wrapper">
+                                <div class="meta-avatar" style="background:#0084FF;">${friendName.charAt(0)}</div>
+                                <div class="online-dot ${onlineClass}"></div>
+                            </div>
+                            <div class="text-details">
+                                <span class="friend-name">${friendName}</span>
+                                <span class="last-msg-preview">${lastMsgText}</span>
+                            </div>
+                        </div>
+                        <span style="font-size:11px; color:#8a8d91;">${lastMsgTime}</span>
+                    </div>
+                `;
+            });
+        }
+
+        // သူငယ်ချင်းအသစ်ရှာဖွေရေးစနစ်
         function renderSearchFriends() {
             const container = document.getElementById('searchResultContainer');
             const searchVal = document.getElementById('searchBar').value.trim().toLowerCase();
             container.innerHTML = "";
 
-            if (searchVal === "") {
-                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">သူငယ်ချင်း အမည်ကို ရိုက်ရှာပါ။</div>`;
-                return;
-            }
+            if (searchVal === "") return;
 
+            userDatabase = JSON.parse(localStorage.getItem('meta_users')) || [];
             const filteredUsers = userDatabase.filter(user => user.username !== currentActiveUser && user.username.includes(searchVal));
 
             if(filteredUsers.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">အသုံးပြုသူ မတွေ့ပါ။</div>`;
+                container.innerHTML = `<div style="text-align:center; color:#65676b; font-size:13px; padding:10px;">ရှာမတွေ့ပါ။</div>`;
                 return;
             }
 
@@ -387,20 +578,19 @@
 
                 let actionBtn = "";
                 if (!rel) {
-                    actionBtn = `<button class="chat-link-btn" onclick="sendFriendRequest('${user.username}')">သူငယ်ချင်းအပ်မည်</button>`;
+                    actionBtn = `<button class="chat-link-btn" onclick="sendFriendRequest(event, '${user.username}')">အုန်းမည်</button>`;
                 } else if (rel.status === 'pending') {
                     if (rel.from === currentActiveUser) {
-                        actionBtn = `<span style="color:#65676b; font-size:13px;">Requested...</span>`;
+                        actionBtn = `<span style="color:#65676b; font-size:12px;">ပို့ထားဆဲ...</span>`;
                     } else {
-                        actionBtn = `<button class="chat-link-btn" style="background:#22c55e;" onclick="acceptFriendRequest('${rel.from}')">လက်ခံမည်</button>`;
+                        actionBtn = `<button class="chat-link-btn" style="background:#24b659; color:white;" onclick="acceptFriendRequest(event, '${rel.from}')">လက်ခံမည်</button>`;
                     }
                 } else if (rel.status === 'accepted') {
-                    actionBtn = `<button class="chat-link-btn" style="background:#1877f2;" onclick="startChatWith('${user.username}')">စကားပြောမည်</button>`;
+                    actionBtn = `<span style="color:#24b659; font-size:12px; font-weight:bold;">သူငယ်ချင်းဖြစ်ပြီး</span>`;
                 }
 
-                // လူတိုင်းမှာ Meta Icon ပြပေးတဲ့အပိုင်း
                 container.innerHTML += `
-                    <div class="friend-item">
+                    <div class="friend-item" onclick="if( '${rel?.status}' === 'accepted') startChatWith('${user.username}')">
                         <div class="user-info-block">
                             <div class="meta-avatar">${user.username.charAt(0)}</div>
                             <span class="friend-name">${user.username}</span>
@@ -411,9 +601,10 @@
             });
         }
 
-        function sendFriendRequest(toUser) {
+        function sendFriendRequest(event, toUser) {
+            event.stopPropagation();
             friendDatabase.push({ from: currentActiveUser, to: toUser, status: 'pending' });
-            localStorage.setItem('fb_friends', JSON.stringify(friendDatabase));
+            localStorage.setItem('meta_friends', JSON.stringify(friendDatabase));
             renderSearchFriends();
         }
 
@@ -428,12 +619,12 @@
                 sec.style.display = "block";
                 incoming.forEach(req => {
                     list.innerHTML += `
-                        <div class="friend-item" style="background:white; margin-bottom:5px; padding:8px;">
+                        <div class="friend-item" style="background:white; padding:6px 10px;">
                             <div class="user-info-block">
                                 <div class="meta-avatar">${req.from.charAt(0)}</div>
                                 <span class="friend-name">${req.from}</span>
                             </div>
-                            <button class="chat-link-btn" style="background:#22c55e;" onclick="acceptFriendRequest('${req.from}')">လက်ခံမည်</button>
+                            <button class="chat-link-btn" style="background:#24b659; color:white;" onclick="acceptFriendRequest(event, '${req.from}')">လက်ခံမည်</button>
                         </div>
                     `;
                 });
@@ -442,13 +633,13 @@
             }
         }
 
-        function acceptFriendRequest(fromUser) {
+        function acceptFriendRequest(event, fromUser) {
+            if(event) event.stopPropagation();
             const rel = friendDatabase.find(f => f.from === fromUser && f.to === currentActiveUser);
             if(rel) {
                 rel.status = 'accepted';
-                localStorage.setItem('fb_friends', JSON.stringify(friendDatabase));
-                alert(fromUser + " နှင့် သူငယ်ချင်း ဖြစ်သွားပါပြီ။");
-                checkIncomingRequests();
+                localStorage.setItem('meta_friends', JSON.stringify(friendDatabase));
+                refreshAllData();
                 renderSearchFriends();
             }
         }
@@ -456,9 +647,15 @@
         function startChatWith(friendName) {
             currentChatFriend = friendName;
             document.getElementById('chatTitle').innerText = friendName;
-            document.getElementById('chatHeaderAvatar').innerText = friendName.charAt(0); // Chat Header မှာ Icon ပြမယ်
+            document.getElementById('chatHeaderAvatar').innerText = friendName.charAt(0);
+            
+            // Header က အွန်လိုင်းမီးစိမ်း ပြင်ဆင်ခြင်း
+            const dot = document.getElementById('chatHeaderOnlineDot');
+            if(isUserOnline(friendName)) dot.classList.add('active');
+            else dot.classList.remove('active');
+
             showScreen('chatScreen');
-            renderPrivateChats();
+            renderPrivateChats(true); // true ဆိုလျှင် အောက်ဆုံးကို တန်းဆင်းပေးမည်
         }
 
         function sendMsg() {
@@ -466,15 +663,24 @@
             const text = input.value.trim();
             if(text === "") return;
 
-            chatDatabase.push({ sender: currentActiveUser, receiver: currentChatFriend, text: text });
-            localStorage.setItem('fb_chats', JSON.stringify(chatDatabase));
+            chatDatabase.push({ 
+                sender: currentActiveUser, 
+                receiver: currentChatFriend, 
+                text: text,
+                timestamp: Date.now() // အချိန်စနစ်ထည့်သွင်းခြင်း
+            });
+            
+            localStorage.setItem('meta_chats', JSON.stringify(chatDatabase));
             input.value = "";
-            renderPrivateChats();
+            renderPrivateChats(true);
         }
 
-        // စာမျက်နှာထဲမှာပါ Icon လေးတွေ တွဲပေါ်စေမယ့်အပိုင်း
-        function renderPrivateChats() {
+        // စာဝင်စာထွက်များကို အချိန်ပြစနစ်ဖြင့် ဖော်ပြခြင်း
+        function renderPrivateChats(shouldScroll = false) {
             const chatBox = document.getElementById('chatBox');
+            const currentScroll = chatBox.scrollTop;
+            const isAtBottom = (chatBox.scrollHeight - chatBox.clientHeight - currentScroll) < 50;
+
             chatBox.innerHTML = "";
             const privateMessages = chatDatabase.filter(msg => 
                 (msg.sender === currentActiveUser && msg.receiver === currentChatFriend) ||
@@ -489,19 +695,32 @@
                 chatBox.innerHTML += `
                     <div class="message-row ${msgClass}">
                         <div class="meta-avatar">${avatarLetter}</div>
-                        <div class="message-text">${msg.text}</div>
+                        <div class="bubble-wrapper">
+                            <div class="message-text">${msg.text}</div>
+                            <div class="msg-time">${formatTime(msg.timestamp)}</div>
+                        </div>
                     </div>
                 `;
             });
-            chatBox.scrollTop = chatBox.scrollHeight;
+
+            // စာအသစ်ဝင်ရင်ဖြစ်စေ၊ Chat စဖွင့်ရင်ဖြစ်စေ အောက်ဆုံးသို့ ရွှေ့ပေးခြင်း
+            if (shouldScroll || isAtBottom) {
+                chatBox.scrollTo({ top: chatBox.scrollHeight, behavior: 'smooth' });
+            }
         }
 
         function backToMain() {
             showScreen('mainScreen');
-            renderSearchFriends();
+            refreshAllData();
+            document.getElementById('searchBar').value = "";
+            document.getElementById('searchResultContainer').innerHTML = "";
         }
 
         function logoutProcess() {
+            if(currentActiveUser) {
+                delete activeSessions[currentActiveUser];
+                localStorage.setItem('meta_sessions', JSON.stringify(activeSessions));
+            }
             currentActiveUser = null;
             showScreen('loginScreen');
         }
@@ -509,6 +728,16 @@
         function checkEnter(event) {
             if (event.key === 'Enter') sendMsg();
         }
+
+        // 🌟 အရေးအကြီးဆုံးအပိုင်း - Browser တက်ဘ်အချင်းချင်း Real-time Live ချိတ်ဆက်ခြင်း
+        window.addEventListener('storage', (e) => {
+            refreshAllData();
+        });
+
+        // စက္ကန့်တိုင်း နောက်ကွယ်မှ အချက်အလက်များစစ်ဆေးပြီး Online ဖြစ်မဖြစ် သတင်းပို့နေမည့်စနစ်
+        setInterval(() => {
+            refreshAllData();
+        }, 3000);
     </script>
 </body>
 </html>
