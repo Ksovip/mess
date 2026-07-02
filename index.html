@@ -1,0 +1,397 @@
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Messenger with Friend Search</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f0f2f5;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+        }
+
+        .container {
+            width: 400px;
+            height: 600px;
+            background: #ffffff;
+            border-radius: 12px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .screen {
+            padding: 25px;
+            display: flex;
+            flex-direction: column;
+            height: 100%;
+        }
+
+        h2, h3 {
+            margin-bottom: 20px;
+            color: #0084FF;
+            text-align: center;
+        }
+
+        /* Forms */
+        .input-group {
+            margin-bottom: 15px;
+        }
+
+        .input-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-size: 14px;
+            color: #65676b;
+        }
+
+        .input-group input {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ced4da;
+            border-radius: 8px;
+            outline: none;
+        }
+
+        .action-btn {
+            background: #0084FF;
+            color: white;
+            border: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-weight: bold;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .switch-link {
+            text-align: center;
+            margin-top: 20px;
+            font-size: 14px;
+            color: #0084FF;
+            text-decoration: underline;
+            cursor: pointer;
+        }
+
+        /* Search Section */
+        .search-box {
+            display: flex;
+            gap: 8px;
+            margin-bottom: 15px;
+        }
+
+        .search-box input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ced4da;
+            border-radius: 20px;
+            outline: none;
+        }
+
+        .search-box button {
+            background: #0084FF;
+            color: white;
+            border: none;
+            padding: 0 15px;
+            border-radius: 20px;
+            cursor: pointer;
+        }
+
+        /* Friend List UI */
+        .friend-list {
+            flex: 1;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .friend-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 12px;
+            background: #f0f2f5;
+            border-radius: 8px;
+        }
+
+        .friend-name {
+            font-weight: bold;
+            color: #050505;
+        }
+
+        .chat-link-btn {
+            background: #e4e6eb;
+            border: none;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 13px;
+            font-weight: 600;
+            cursor: pointer;
+            color: #0084FF;
+        }
+
+        /* Chat Screen */
+        .chat-header {
+            background: #ffffff;
+            padding: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            border-bottom: 1px solid #e4e6eb;
+        }
+
+        .back-btn {
+            background: none;
+            border: none;
+            color: #0084FF;
+            font-size: 16px;
+            font-weight: bold;
+            cursor: pointer;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .message-block {
+            display: flex;
+            flex-direction: column;
+            max-width: 75%;
+        }
+
+        .message-block.sent { align-self: flex-end; align-items: flex-end; }
+        .message-block.received { align-self: flex-start; align-items: flex-start; }
+
+        .message-text {
+            padding: 10px 14px;
+            border-radius: 18px;
+            font-size: 14px;
+            word-wrap: break-word;
+        }
+
+        .sent .message-text { background: #0084FF; color: white; border-bottom-right-radius: 4px; }
+        .received .message-text { background: #e4e6eb; color: black; border-bottom-left-radius: 4px; }
+
+        .chat-input-area {
+            padding: 12px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            border-top: 1px solid #e4e6eb;
+        }
+
+        .chat-input {
+            flex: 1;
+            padding: 10px 15px;
+            border: none;
+            background: #f0f2f5;
+            border-radius: 20px;
+            outline: none;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        
+        <div id="loginScreen" class="screen">
+            <h2>Log In ဝင်ပါ</h2>
+            <div class="input-group">
+                <label>အသုံးပြုသူအမည် (Username)</label>
+                <input type="text" id="loginUser" placeholder="Username">
+            </div>
+            <div class="input-group">
+                <label>လျှို့ဝှက်နံပါတ် (Password)</label>
+                <input type="password" id="loginPass" placeholder="******">
+            </div>
+            <button class="action-btn" onclick="loginProcess()">Log In ဝင်မည်</button>
+            <div class="switch-link" onclick="showScreen('registerScreen')">အကောင့်မရှိသေးပါက အသစ်ဖွင့်ရန်</div>
+        </div>
+
+        <div id="registerScreen" class="screen" style="display: none;">
+            <h2>အကောင့်အသစ်ဖွင့်ပါ</h2>
+            <div class="input-group">
+                <label>အသုံးပြုသူအမည်သစ် (New Username)</label>
+                <input type="text" id="regUser" placeholder="ဥပမာ - koko, su_su">
+            </div>
+            <div class="input-group">
+                <label>လျှို့ဝှက်နံပါတ် (Password)</label>
+                <input type="password" id="regPass" placeholder="******">
+            </div>
+            <button class="action-btn" style="background: #22c55e;" onclick="registerProcess()">အကောင့်အသစ်ဆောက်မည်</button>
+            <div class="switch-link" onclick="showScreen('loginScreen')">အကောင့်ရှိပြီးသားမို့ Log In ပြန်ဝင်ရန်</div>
+        </div>
+
+        <div id="mainScreen" class="screen" style="display: none; padding: 15px;">
+            <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
+                <span id="userBadge" style="font-weight:bold; color:#65676b;"></span>
+                <button onclick="logoutProcess()" style="border:none; background:none; color:red; cursor:pointer;">ထွက်မည်</button>
+            </div>
+            <h3>သူငယ်ချင်း ရှာဖွေရန်</h3>
+            
+            <div class="search-box">
+                <input type="text" id="searchBar" placeholder="သူငယ်ချင်းအမည် ရိုက်ရှာပါ..." oninput="renderFriends()">
+            </div>
+
+            <div class="friend-list" id="friendListContainer">
+                </div>
+        </div>
+
+        <div id="chatScreen" class="screen" style="display: none; padding: 0;">
+            <div class="chat-header">
+                <button class="back-btn" onclick="showScreen('mainScreen')">⬅ ပြန်ထွက်</button>
+                <div style="font-weight: bold; font-size: 16px;" id="chatTitle">သူငယ်ချင်းအမည်</div>
+                <div style="width: 50px;"></div> </div>
+            <div class="chat-messages" id="chatBox"></div>
+            <div class="chat-input-area">
+                <input type="text" class="chat-input" id="msgInput" placeholder="စာရိုက်ပါ..." onkeypress="checkEnter(event)">
+                <button class="back-btn" onclick="sendMsg()">ပို့မည်</button>
+            </div>
+        </div>
+
+    </div>
+
+    <script>
+        let userDatabase = JSON.parse(localStorage.getItem('db_users')) || [];
+        let chatDatabase = JSON.parse(localStorage.getItem('db_chats')) || [];
+        let currentActiveUser = null;
+        let currentChatFriend = null; // ဘယ်သူငယ်ချင်းနဲ့ စကားပြောနေလဲ မှတ်ဖို့
+
+        function showScreen(screenId) {
+            document.getElementById('loginScreen').style.display = "none";
+            document.getElementById('registerScreen').style.display = "none";
+            document.getElementById('mainScreen').style.display = "none";
+            document.getElementById('chatScreen').style.display = "none";
+            document.getElementById(screenId).style.display = "flex";
+        }
+
+        // အကောင့်ဖွင့်ခြင်း
+        function registerProcess() {
+            const uName = document.getElementById('regUser').value.trim().toLowerCase();
+            const pWord = document.getElementById('regPass').value.trim();
+
+            if(!uName || !pWord) return alert("အချက်အလက် ဖြည့်စွက်ပါ!");
+            if(userDatabase.some(user => user.username === uName)) return alert("ဒီနာမည် ရှိပြီးသားပါ။");
+
+            userDatabase.push({ username: uName, password: pWord });
+            localStorage.setItem('db_users', JSON.stringify(userDatabase));
+            alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါပြီ။");
+            document.getElementById('regUser').value = "";
+            document.getElementById('regPass').value = "";
+            showScreen('loginScreen');
+        }
+
+        // Log In ဝင်ခြင်း
+        function loginProcess() {
+            const uName = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pWord = document.getElementById('loginPass').value.trim();
+            const foundUser = userDatabase.find(user => user.username === uName && user.password === pWord);
+
+            if(foundUser) {
+                currentActiveUser = uName;
+                document.getElementById('userBadge').innerText = "Hi, " + uName;
+                showScreen('mainScreen');
+                renderFriends();
+            } else {
+                alert("အမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။");
+            }
+        }
+
+        // သူငယ်ချင်းစာရင်းကို ရှာဖွေပြီး ပြသခြင်း
+        function renderFriends() {
+            const container = document.getElementById('friendListContainer');
+            const searchVal = document.getElementById('searchBar').value.trim().toLowerCase();
+            container.innerHTML = "";
+
+            // ကိုယ့်နာမည်ကလွဲလို့ ကျန်တဲ့ Register လုပ်ထားသမျှလူ အကုန်ပြမယ် (Search အလုပ်လုပ်မယ်)
+            const filteredUsers = userDatabase.filter(user => user.username !== currentActiveUser && user.username.includes(searchVal));
+
+            if(filteredUsers.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">သူငယ်ချင်း မတွေ့ပါ။</div>`;
+                return;
+            }
+
+            filteredUsers.forEach(user => {
+                container.innerHTML += `
+                    <div class="friend-item">
+                        <span class="friend-name">${user.username}</span>
+                        <button class="chat-link-btn" onclick="startChatWith('${user.username}')">စကားပြောမည်</button>
+                    </div>
+                `;
+            });
+        }
+
+        // တစ်ဦးချင်းစီ သီးသန့် စကားပြောခန်း ဖွင့်ခြင်း
+        function startChatWith(friendName) {
+            currentChatFriend = friendName;
+            document.getElementById('chatTitle').innerText = friendName;
+            showScreen('chatScreen');
+            renderPrivateChats();
+        }
+
+        // စာပို့ခြင်း (Sender နဲ့ Receiver စနစ် သုံးထားပါတယ်)
+        function sendMsg() {
+            const input = document.getElementById('msgInput');
+            const text = input.value.trim();
+            if(text === "") return;
+
+            chatDatabase.push({
+                sender: currentActiveUser,
+                receiver: currentChatFriend,
+                text: text
+            });
+            localStorage.setItem('db_chats', JSON.stringify(chatDatabase));
+            input.value = "";
+            renderPrivateChats();
+        }
+
+        // ကိုယ်နဲ့ အဲဒီသူငယ်ချင်း နှစ်ယောက်ကြားထဲက စာတွေကိုပဲ စစ်ထုတ်ပြသခြင်း
+        function renderPrivateChats() {
+            const chatBox = document.getElementById('chatBox');
+            chatBox.innerHTML = "";
+
+            const privateMessages = chatDatabase.filter(msg => 
+                (msg.sender === currentActiveUser && msg.receiver === currentChatFriend) ||
+                (msg.sender === currentChatFriend && msg.receiver === currentActiveUser)
+            );
+
+            privateMessages.forEach(msg => {
+                const isMe = msg.sender === currentActiveUser;
+                const msgClass = isMe ? 'sent' : 'received';
+                chatBox.innerHTML += `
+                    <div class="message-block ${msgClass}">
+                        <div class="message-text">${msg.text}</div>
+                    </div>
+                `;
+            });
+            chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function logoutProcess() {
+            currentActiveUser = null;
+            showScreen('loginScreen');
+        }
+
+        function checkEnter(event) {
+            if (event.key === 'Enter') sendMsg();
+        }
+    </script>
+</body>
+</html>
