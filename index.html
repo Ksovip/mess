@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Messenger with Friend Search</title>
+    <title>Meta Icon Style Chat System</title>
     <style>
         * {
             margin: 0;
@@ -40,11 +40,27 @@
 
         h2, h3 {
             margin-bottom: 20px;
-            color: #0084FF;
+            color: #1877f2;
             text-align: center;
         }
 
-        /* Forms */
+        /* Meta Dynamic Avatar Style */
+        .meta-avatar {
+            width: 40px;
+            height: 40px;
+            background: linear-gradient(135deg, #0084FF, #1877f2);
+            color: white;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            font-size: 16px;
+            text-transform: uppercase;
+            box-shadow: 0 2px 5px rgba(24, 119, 242, 0.2);
+            flex-shrink: 0;
+        }
+
         .input-group {
             margin-bottom: 15px;
         }
@@ -65,7 +81,7 @@
         }
 
         .action-btn {
-            background: #0084FF;
+            background: #1877f2;
             color: white;
             border: none;
             padding: 12px;
@@ -79,33 +95,29 @@
             text-align: center;
             margin-top: 20px;
             font-size: 14px;
-            color: #0084FF;
+            color: #1877f2;
             text-decoration: underline;
             cursor: pointer;
         }
 
-        /* Search Section */
-        .search-box {
-            display: flex;
-            gap: 8px;
-            margin-bottom: 15px;
-        }
-
+        /* Search Box */
         .search-box input {
-            flex: 1;
-            padding: 10px;
+            width: 100%;
+            padding: 12px;
             border: 1px solid #ced4da;
             border-radius: 20px;
             outline: none;
+            background: #f0f2f5;
+            margin-bottom: 15px;
         }
 
-        .search-box button {
-            background: #0084FF;
-            color: white;
-            border: none;
-            padding: 0 15px;
-            border-radius: 20px;
-            cursor: pointer;
+        /* Request Section */
+        .request-section {
+            margin-bottom: 15px;
+            background: #e7f3ff;
+            padding: 10px;
+            border-radius: 8px;
+            display: none;
         }
 
         /* Friend List UI */
@@ -119,43 +131,51 @@
 
         .friend-item {
             display: flex;
-            justify-content: space-between;
             align-items: center;
-            padding: 12px;
+            justify-content: space-between;
+            padding: 10px;
             background: #f0f2f5;
             border-radius: 8px;
+            gap: 12px;
+        }
+
+        .user-info-block {
+            display: flex;
+            align-items: center;
+            gap: 10px;
         }
 
         .friend-name {
             font-weight: bold;
             color: #050505;
+            text-transform: capitalize;
         }
 
         .chat-link-btn {
-            background: #e4e6eb;
+            background: #1877f2;
             border: none;
             padding: 6px 12px;
             border-radius: 15px;
             font-size: 13px;
             font-weight: 600;
             cursor: pointer;
-            color: #0084FF;
+            color: white;
         }
 
         /* Chat Screen */
         .chat-header {
             background: #ffffff;
-            padding: 15px;
+            padding: 10px 15px;
             display: flex;
             align-items: center;
-            justify-content: space-between;
+            gap: 10px;
             border-bottom: 1px solid #e4e6eb;
         }
 
         .back-btn {
             background: none;
             border: none;
-            color: #0084FF;
+            color: #1877f2;
             font-size: 16px;
             font-weight: bold;
             cursor: pointer;
@@ -170,14 +190,28 @@
             gap: 12px;
         }
 
-        .message-block {
+        /* Message Bubble with Avatar */
+        .message-row {
             display: flex;
-            flex-direction: column;
-            max-width: 75%;
+            gap: 8px;
+            max-width: 85%;
+            align-items: flex-end;
         }
 
-        .message-block.sent { align-self: flex-end; align-items: flex-end; }
-        .message-block.received { align-self: flex-start; align-items: flex-start; }
+        .message-row.sent {
+            align-self: flex-end;
+            flex-direction: row-reverse;
+        }
+
+        .message-row.received {
+            align-self: flex-start;
+        }
+
+        .message-row .meta-avatar {
+            width: 28px;
+            height: 28px;
+            font-size: 12px;
+        }
 
         .message-text {
             padding: 10px 14px;
@@ -186,7 +220,7 @@
             word-wrap: break-word;
         }
 
-        .sent .message-text { background: #0084FF; color: white; border-bottom-right-radius: 4px; }
+        .sent .message-text { background: #1877f2; color: white; border-bottom-right-radius: 4px; }
         .received .message-text { background: #e4e6eb; color: black; border-bottom-left-radius: 4px; }
 
         .chat-input-area {
@@ -212,7 +246,10 @@
     <div class="container">
         
         <div id="loginScreen" class="screen">
-            <h2>Log In ဝင်ပါ</h2>
+            <div style="display: flex; justify-content: center; margin-bottom: 15px;">
+                <div class="meta-avatar" style="width: 60px; height: 60px; font-size: 24px;">M</div>
+            </div>
+            <h2>Meta Chat</h2>
             <div class="input-group">
                 <label>အသုံးပြုသူအမည် (Username)</label>
                 <input type="text" id="loginUser" placeholder="Username">
@@ -222,43 +259,51 @@
                 <input type="password" id="loginPass" placeholder="******">
             </div>
             <button class="action-btn" onclick="loginProcess()">Log In ဝင်မည်</button>
-            <div class="switch-link" onclick="showScreen('registerScreen')">အကောင့်မရှိသေးပါက အသစ်ဖွင့်ရန်</div>
+            <div class="switch-link" onclick="showScreen('registerScreen')">အကောင့်အသစ်ဖွင့်ရန် နှိပ်ပါ</div>
         </div>
 
         <div id="registerScreen" class="screen" style="display: none;">
             <h2>အကောင့်အသစ်ဖွင့်ပါ</h2>
             <div class="input-group">
                 <label>အသုံးပြုသူအမည်သစ် (New Username)</label>
-                <input type="text" id="regUser" placeholder="ဥပမာ - koko, su_su">
+                <input type="text" id="regUser" placeholder="ဥပမာ - koko, susu">
             </div>
             <div class="input-group">
                 <label>လျှို့ဝှက်နံပါတ် (Password)</label>
                 <input type="password" id="regPass" placeholder="******">
             </div>
-            <button class="action-btn" style="background: #22c55e;" onclick="registerProcess()">အကောင့်အသစ်ဆောက်မည်</button>
+            <button class="action-btn" style="background: #22c55e;" onclick="registerProcess()">အကောင့်သစ်ဆောက်မည်</button>
             <div class="switch-link" onclick="showScreen('loginScreen')">အကောင့်ရှိပြီးသားမို့ Log In ပြန်ဝင်ရန်</div>
         </div>
 
         <div id="mainScreen" class="screen" style="display: none; padding: 15px;">
             <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:15px;">
-                <span id="userBadge" style="font-weight:bold; color:#65676b;"></span>
-                <button onclick="logoutProcess()" style="border:none; background:none; color:red; cursor:pointer;">ထွက်မည်</button>
-            </div>
-            <h3>သူငယ်ချင်း ရှာဖွေရန်</h3>
-            
-            <div class="search-box">
-                <input type="text" id="searchBar" placeholder="သူငယ်ချင်းအမည် ရိုက်ရှာပါ..." oninput="renderFriends()">
+                <div class="user-info-block">
+                    <div class="meta-avatar" id="myMetaAvatar" style="width:32px; height:32px; font-size:14px;"></div>
+                    <span id="userBadge" style="font-weight:bold; color:#65676b;"></span>
+                </div>
+                <button onclick="logoutProcess()" style="border:none; background:none; color:red; cursor:pointer; font-weight:bold;">ထွက်မည်</button>
             </div>
 
-            <div class="friend-list" id="friendListContainer">
-                </div>
+            <div class="request-section" id="reqSection">
+                <h4 style="font-size:13px; color:#1877f2; margin-bottom:8px;">Friend Requests</h4>
+                <div id="incomingReqList"></div>
+            </div>
+            
+            <h3>သူငယ်ချင်း ရှာဖွေရန်</h3>
+            <div class="search-box">
+                <input type="text" id="searchBar" placeholder="နာမည်ရိုက်ရှာပါ..." oninput="renderSearchFriends()">
+            </div>
+
+            <div class="friend-list" id="searchResultContainer"></div>
         </div>
 
         <div id="chatScreen" class="screen" style="display: none; padding: 0;">
             <div class="chat-header">
-                <button class="back-btn" onclick="showScreen('mainScreen')">⬅ ပြန်ထွက်</button>
-                <div style="font-weight: bold; font-size: 16px;" id="chatTitle">သူငယ်ချင်းအမည်</div>
-                <div style="width: 50px;"></div> </div>
+                <button class="back-btn" onclick="backToMain()">⬅</button>
+                <div class="meta-avatar" id="chatHeaderAvatar" style="width:35px; height:35px; font-size:15px;"></div>
+                <div style="font-weight: bold; font-size: 16px; flex: 1;" id="chatTitle">သူငယ်ချင်းအမည်</div>
+            </div>
             <div class="chat-messages" id="chatBox"></div>
             <div class="chat-input-area">
                 <input type="text" class="chat-input" id="msgInput" placeholder="စာရိုက်ပါ..." onkeypress="checkEnter(event)">
@@ -269,10 +314,12 @@
     </div>
 
     <script>
-        let userDatabase = JSON.parse(localStorage.getItem('db_users')) || [];
-        let chatDatabase = JSON.parse(localStorage.getItem('db_chats')) || [];
+        let userDatabase = JSON.parse(localStorage.getItem('fb_users')) || [];
+        let chatDatabase = JSON.parse(localStorage.getItem('fb_chats')) || [];
+        let friendDatabase = JSON.parse(localStorage.getItem('fb_friends')) || [];
+        
         let currentActiveUser = null;
-        let currentChatFriend = null; // ဘယ်သူငယ်ချင်းနဲ့ စကားပြောနေလဲ မှတ်ဖို့
+        let currentChatFriend = null;
 
         function showScreen(screenId) {
             document.getElementById('loginScreen').style.display = "none";
@@ -282,23 +329,20 @@
             document.getElementById(screenId).style.display = "flex";
         }
 
-        // အကောင့်ဖွင့်ခြင်း
         function registerProcess() {
             const uName = document.getElementById('regUser').value.trim().toLowerCase();
             const pWord = document.getElementById('regPass').value.trim();
-
             if(!uName || !pWord) return alert("အချက်အလက် ဖြည့်စွက်ပါ!");
             if(userDatabase.some(user => user.username === uName)) return alert("ဒီနာမည် ရှိပြီးသားပါ။");
 
             userDatabase.push({ username: uName, password: pWord });
-            localStorage.setItem('db_users', JSON.stringify(userDatabase));
+            localStorage.setItem('fb_users', JSON.stringify(userDatabase));
             alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါပြီ။");
             document.getElementById('regUser').value = "";
             document.getElementById('regPass').value = "";
             showScreen('loginScreen');
         }
 
-        // Log In ဝင်ခြင်း
         function loginProcess() {
             const uName = document.getElementById('loginUser').value.trim().toLowerCase();
             const pWord = document.getElementById('loginPass').value.trim();
@@ -306,82 +350,155 @@
 
             if(foundUser) {
                 currentActiveUser = uName;
-                document.getElementById('userBadge').innerText = "Hi, " + uName;
+                document.getElementById('userBadge').innerText = uName;
+                document.getElementById('myMetaAvatar').innerText = uName.charAt(0); // ကိုယ့် Icon အတွက် ပထမစာလုံးယူမယ်
+                document.getElementById('searchBar').value = ""; 
                 showScreen('mainScreen');
-                renderFriends();
+                checkIncomingRequests();
+                renderSearchFriends();
             } else {
                 alert("အမည် သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။");
             }
         }
 
-        // သူငယ်ချင်းစာရင်းကို ရှာဖွေပြီး ပြသခြင်း
-        function renderFriends() {
-            const container = document.getElementById('friendListContainer');
+        // ရှာဖွေသည့်စနစ် (လူတိုင်းမှာ Icon ပါမည်)
+        function renderSearchFriends() {
+            const container = document.getElementById('searchResultContainer');
             const searchVal = document.getElementById('searchBar').value.trim().toLowerCase();
             container.innerHTML = "";
 
-            // ကိုယ့်နာမည်ကလွဲလို့ ကျန်တဲ့ Register လုပ်ထားသမျှလူ အကုန်ပြမယ် (Search အလုပ်လုပ်မယ်)
+            if (searchVal === "") {
+                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">သူငယ်ချင်း အမည်ကို ရိုက်ရှာပါ။</div>`;
+                return;
+            }
+
             const filteredUsers = userDatabase.filter(user => user.username !== currentActiveUser && user.username.includes(searchVal));
 
             if(filteredUsers.length === 0) {
-                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">သူငယ်ချင်း မတွေ့ပါ။</div>`;
+                container.innerHTML = `<div style="text-align:center; color:#65676b; margin-top:20px;">အသုံးပြုသူ မတွေ့ပါ။</div>`;
                 return;
             }
 
             filteredUsers.forEach(user => {
+                const rel = friendDatabase.find(f => 
+                    (f.from === currentActiveUser && f.to === user.username) || 
+                    (f.from === user.username && f.to === currentActiveUser)
+                );
+
+                let actionBtn = "";
+                if (!rel) {
+                    actionBtn = `<button class="chat-link-btn" onclick="sendFriendRequest('${user.username}')">သူငယ်ချင်းအပ်မည်</button>`;
+                } else if (rel.status === 'pending') {
+                    if (rel.from === currentActiveUser) {
+                        actionBtn = `<span style="color:#65676b; font-size:13px;">Requested...</span>`;
+                    } else {
+                        actionBtn = `<button class="chat-link-btn" style="background:#22c55e;" onclick="acceptFriendRequest('${rel.from}')">လက်ခံမည်</button>`;
+                    }
+                } else if (rel.status === 'accepted') {
+                    actionBtn = `<button class="chat-link-btn" style="background:#1877f2;" onclick="startChatWith('${user.username}')">စကားပြောမည်</button>`;
+                }
+
+                // လူတိုင်းမှာ Meta Icon ပြပေးတဲ့အပိုင်း
                 container.innerHTML += `
                     <div class="friend-item">
-                        <span class="friend-name">${user.username}</span>
-                        <button class="chat-link-btn" onclick="startChatWith('${user.username}')">စကားပြောမည်</button>
+                        <div class="user-info-block">
+                            <div class="meta-avatar">${user.username.charAt(0)}</div>
+                            <span class="friend-name">${user.username}</span>
+                        </div>
+                        ${actionBtn}
                     </div>
                 `;
             });
         }
 
-        // တစ်ဦးချင်းစီ သီးသန့် စကားပြောခန်း ဖွင့်ခြင်း
+        function sendFriendRequest(toUser) {
+            friendDatabase.push({ from: currentActiveUser, to: toUser, status: 'pending' });
+            localStorage.setItem('fb_friends', JSON.stringify(friendDatabase));
+            renderSearchFriends();
+        }
+
+        function checkIncomingRequests() {
+            const sec = document.getElementById('reqSection');
+            const list = document.getElementById('incomingReqList');
+            list.innerHTML = "";
+
+            const incoming = friendDatabase.filter(f => f.to === currentActiveUser && f.status === 'pending');
+
+            if(incoming.length > 0) {
+                sec.style.display = "block";
+                incoming.forEach(req => {
+                    list.innerHTML += `
+                        <div class="friend-item" style="background:white; margin-bottom:5px; padding:8px;">
+                            <div class="user-info-block">
+                                <div class="meta-avatar">${req.from.charAt(0)}</div>
+                                <span class="friend-name">${req.from}</span>
+                            </div>
+                            <button class="chat-link-btn" style="background:#22c55e;" onclick="acceptFriendRequest('${req.from}')">လက်ခံမည်</button>
+                        </div>
+                    `;
+                });
+            } else {
+                sec.style.display = "none";
+            }
+        }
+
+        function acceptFriendRequest(fromUser) {
+            const rel = friendDatabase.find(f => f.from === fromUser && f.to === currentActiveUser);
+            if(rel) {
+                rel.status = 'accepted';
+                localStorage.setItem('fb_friends', JSON.stringify(friendDatabase));
+                alert(fromUser + " နှင့် သူငယ်ချင်း ဖြစ်သွားပါပြီ။");
+                checkIncomingRequests();
+                renderSearchFriends();
+            }
+        }
+
         function startChatWith(friendName) {
             currentChatFriend = friendName;
             document.getElementById('chatTitle').innerText = friendName;
+            document.getElementById('chatHeaderAvatar').innerText = friendName.charAt(0); // Chat Header မှာ Icon ပြမယ်
             showScreen('chatScreen');
             renderPrivateChats();
         }
 
-        // စာပို့ခြင်း (Sender နဲ့ Receiver စနစ် သုံးထားပါတယ်)
         function sendMsg() {
             const input = document.getElementById('msgInput');
             const text = input.value.trim();
             if(text === "") return;
 
-            chatDatabase.push({
-                sender: currentActiveUser,
-                receiver: currentChatFriend,
-                text: text
-            });
-            localStorage.setItem('db_chats', JSON.stringify(chatDatabase));
+            chatDatabase.push({ sender: currentActiveUser, receiver: currentChatFriend, text: text });
+            localStorage.setItem('fb_chats', JSON.stringify(chatDatabase));
             input.value = "";
             renderPrivateChats();
         }
 
-        // ကိုယ်နဲ့ အဲဒီသူငယ်ချင်း နှစ်ယောက်ကြားထဲက စာတွေကိုပဲ စစ်ထုတ်ပြသခြင်း
+        // စာမျက်နှာထဲမှာပါ Icon လေးတွေ တွဲပေါ်စေမယ့်အပိုင်း
         function renderPrivateChats() {
             const chatBox = document.getElementById('chatBox');
             chatBox.innerHTML = "";
-
             const privateMessages = chatDatabase.filter(msg => 
                 (msg.sender === currentActiveUser && msg.receiver === currentChatFriend) ||
                 (msg.sender === currentChatFriend && msg.receiver === currentActiveUser)
             );
-
+            
             privateMessages.forEach(msg => {
                 const isMe = msg.sender === currentActiveUser;
                 const msgClass = isMe ? 'sent' : 'received';
+                const avatarLetter = msg.sender.charAt(0);
+
                 chatBox.innerHTML += `
-                    <div class="message-block ${msgClass}">
+                    <div class="message-row ${msgClass}">
+                        <div class="meta-avatar">${avatarLetter}</div>
                         <div class="message-text">${msg.text}</div>
                     </div>
                 `;
             });
             chatBox.scrollTop = chatBox.scrollHeight;
+        }
+
+        function backToMain() {
+            showScreen('mainScreen');
+            renderSearchFriends();
         }
 
         function logoutProcess() {
