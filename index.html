@@ -30,13 +30,12 @@
         }
 
         body {
-            background: var(--fb-bg);
-            width: 100%;
-            height: 100dvh; /* Dynamic Viewport Height */
-            overflow: hidden;
-            overscroll-behavior: none; /* Scroll ဆွဲလျှင် bounce ဖြစ်ခြင်းကို တားဆီးရန် */
-            position: fixed;
-        }
+    background: var(--fb-bg);
+    width: 100%;
+    height: 100%; 
+    overflow: hidden;
+    position: fixed;
+}
 
         .app-container {
             width: 100%;
@@ -185,7 +184,7 @@
     <div class="app-container">
         
         <div id="loginScreen" class="auth-screen">
-            <div class="auth-logo">facebook</div>
+            <div class="auth-logo">1K2K</div>
             <div class="form-group"><input type="text" id="loginUser" placeholder="အသုံးပြုသူအမည် (Username)"></div>
             <div class="form-group"><input type="password" id="loginPass" placeholder="လျှို့ဝှက်နံပါတ်"></div>
             <button class="fb-btn-blue" onclick="loginProcess()">လော့ဂ်အင်ဝင်ရန်</button>
@@ -203,7 +202,7 @@
         <div id="mainAppScreen" style="display: none; flex-direction: column; height: 100%;">
             
             <div class="app-header">
-                <div class="app-logo" id="headerTitle">facebook</div>
+                <div class="app-logo" id="headerTitle">1k2k</div>
                 <button class="logout-btn" onclick="logoutProcess()">ထွက်မည်</button>
             </div>
 
