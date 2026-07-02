@@ -1,1 +1,700 @@
-yyy
+<!DOCTYPE html>
+<html lang="my">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Facebook Full Screen Clone</title>
+    <style>
+        :root {
+            --fb-blue: #1877f2;
+            --fb-bg: #f0f2f5;
+            --fb-card: #ffffff;
+            --fb-text-main: #050505;
+            --fb-text-sub: #65676b;
+            --fb-border: #e4e6eb;
+            --fb-green: #42b72a;
+            --fb-light-blue: #e7f3ff;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+
+        /* မျက်နှာပြင် အပြည့်ဖြစ်စေရန် ပြင်ဆင်ထားသည် */
+        body {
+            background: var(--fb-bg);
+            margin: 0;
+            padding: 0;
+            width: 100vw;
+            height: 100vh;
+            overflow: hidden;
+        }
+
+        .app-container {
+            width: 100vw;
+            height: 100vh;
+            background: var(--fb-bg);
+            border-radius: 0; /* ဘောင်အဝိုင်းဖြုတ်လိုက်သည် */
+            box-shadow: none; /* Shadow ဖြုတ်လိုက်သည် */
+            overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            position: relative;
+            border: none; /* အမဲရောင်ဘောင် ဖြုတ်လိုက်သည် */
+        }
+
+        .app-header {
+            background: var(--fb-card);
+            padding: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid var(--fb-border);
+            height: 60px;
+            flex-shrink: 0;
+        }
+
+        .app-logo { color: var(--fb-blue); font-size: 24px; font-weight: 800; letter-spacing: -0.5px; }
+
+        .logout-btn {
+            background: #f0f2f5; border: none; padding: 8px 14px; border-radius: 20px; font-weight: 600; color: var(--fb-text-main); cursor: pointer; font-size: 13px;
+        }
+
+        .main-content-area { flex: 1; overflow-y: auto; padding: 12px; position: relative; }
+        .main-content-area::-webkit-scrollbar { display: none; }
+
+        .bottom-nav {
+            height: 65px; background: var(--fb-card); border-top: 1px solid var(--fb-border); display: flex; justify-content: space-around; align-items: center; flex-shrink: 0; padding-bottom: 4px;
+        }
+
+        .nav-item {
+            display: flex; flex-direction: column; align-items: center; color: var(--fb-text-sub); font-size: 11px; font-weight: 600; cursor: pointer; flex: 1; padding: 6px 0;
+        }
+
+        .nav-item.active { color: var(--fb-blue); }
+
+        .nav-icon { font-size: 20px; margin-bottom: 2px; }
+
+        .auth-screen {
+            padding: 40px 24px; background: var(--fb-card); height: 100%; display: flex; flex-direction: column; justify-content: center;
+        }
+        .auth-logo { font-size: 42px; color: var(--fb-blue); font-weight: 800; text-align: center; margin-bottom: 30px; }
+        .form-group { margin-bottom: 14px; }
+        .form-group input {
+            width: 100%; padding: 14px 16px; border: 1px solid var(--fb-border); border-radius: 10px; outline: none; font-size: 15px; background: #f5f6f7;
+        }
+        .form-group input:focus { border-color: var(--fb-blue); background: #fff; }
+        
+        .fb-btn-blue {
+            width: 100%; background: var(--fb-blue); color: #fff; border: none; padding: 14px; border-radius: 10px; font-size: 16px; font-weight: bold; cursor: pointer;
+        }
+        .fb-btn-green {
+            width: 100%; background: var(--fb-green); color: #fff; border: none; padding: 12px; border-radius: 10px; font-size: 15px; font-weight: bold; cursor: pointer; margin-top: 20px;
+        }
+
+        .create-post-shortcut {
+            background: var(--fb-card); padding: 14px; border-radius: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05); margin-bottom: 12px; display: flex; gap: 12px; align-items: center;
+        }
+        .shortcut-input {
+            flex: 1; background: #f0f2f5; padding: 10px 16px; border-radius: 24px; color: var(--fb-text-sub); font-size: 14px; cursor: pointer;
+        }
+        
+        .post-box-popup {
+            background: var(--fb-card); border-radius: 12px; padding: 16px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); margin-bottom: 14px; border: 1px solid var(--fb-border);
+        }
+        .post-box-popup textarea {
+            width: 100%; height: 90px; border: 1px solid #f0f2f5; resize: none; outline: none; font-size: 15px; margin-top: 10px; background: #fafafa; padding: 10px; border-radius: 8px;
+        }
+
+        .post-card {
+            background: var(--fb-card); border-radius: 12px; padding: 14px; margin-bottom: 12px; box-shadow: 0 1px 2px rgba(0,0,0,0.05);
+        }
+        .post-header { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-bottom: 12px; position: relative; }
+        
+        .user-avatar {
+            width: 40px; height: 40px; background: linear-gradient(135deg, #1877f2, #0056b3); color: #fff; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 16px; text-transform: uppercase;
+        }
+        
+        .menu-container { position: relative; }
+        .menu-btn { cursor: pointer; font-size: 24px; color: #65676b; padding: 0 10px; font-weight: bold; }
+        .menu-content { 
+            display: none; position: absolute; right: 0; top: 30px; background: #fff; border: 1px solid #ddd; 
+            border-radius: 8px; z-index: 99; box-shadow: 0 4px 12px rgba(0,0,0,0.15); width: 130px; 
+        }
+        .menu-item { padding: 10px; cursor: pointer; font-size: 13px; color: #050505; }
+        .menu-item:hover { background: #f0f2f5; }
+
+        .author-name { 
+            font-weight: 700; color: var(--fb-blue); font-size: 14px; cursor: pointer; 
+        }
+        .author-name:hover { text-decoration: underline; }
+        
+        .post-time { font-size: 12px; color: var(--fb-text-sub); margin-top: 2px; }
+        .post-text { font-size: 14.5px; color: var(--fb-text-main); line-height: 1.5; white-space: pre-line; word-wrap: break-word; }
+        
+        .card-actions {
+            display: flex; border-top: 1px solid var(--fb-border); border-bottom: 1px solid var(--fb-border); margin-top: 12px; padding: 6px 0;
+        }
+        .action-button {
+            flex: 1; background: none; border: none; color: var(--fb-text-sub); font-size: 13.5px; font-weight: 600; cursor: pointer; display: flex; align-items: center; justify-content: center; gap: 6px; padding: 8px;
+        }
+        .action-button.liked { color: #e42645; font-weight: 700; }
+
+        .cmt-section { display: none; }
+        .cmt-wrapper { background: #f0f2f5; border-radius: 10px; padding: 10px; margin-top: 10px; display: flex; flex-direction: column; gap: 8px; }
+        .cmt-item { background: var(--fb-card); padding: 8px 14px; border-radius: 16px; font-size: 13px; max-width: 95%; align-self: flex-start; }
+        .cmt-user { font-weight: 700; color: var(--fb-text-main); margin-right: 6px; }
+        .cmt-input-box { display: flex; gap: 8px; margin-top: 6px; }
+        .cmt-input-box input { flex: 1; padding: 10px 16px; border: 1px solid var(--fb-border); border-radius: 20px; outline: none; font-size: 13px; }
+
+        .search-field {
+            width: 100%; padding: 12px 18px; border: 1px solid var(--fb-border); border-radius: 24px; outline: none; background: var(--fb-card); font-size: 14px; margin-bottom: 16px;
+        }
+        .item-row {
+            background: var(--fb-card); padding: 14px; border-radius: 12px; display: flex; align-items: center; justify-content: space-between; margin-bottom: 10px; box-shadow: 0 1px 2px rgba(0,0,0,0.03);
+        }
+        .row-info { display: flex; align-items: center; gap: 14px; cursor: pointer; }
+        .row-name { font-weight: 700; font-size: 14.5px; color: var(--fb-text-main); text-transform: capitalize; }
+        
+        .row-btn-blue { background: var(--fb-blue); color: white; border: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .row-btn-gray { background: #e4e6eb; color: var(--fb-text-main); border: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+        .row-btn-green { background: var(--fb-green); color: white; border: none; padding: 9px 16px; border-radius: 8px; font-size: 13px; font-weight: 700; cursor: pointer; }
+
+        .profile-banner {
+            background: var(--fb-card); border-radius: 14px; padding: 24px 16px; display: flex; flex-direction: column; align-items: center; margin-bottom: 14px; border: 1px solid var(--fb-border);
+        }
+        .profile-big-avatar {
+            width: 90px; height: 90px; background: linear-gradient(135deg, #1877f2, #0084ff); color: #fff; font-size: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-weight: 800; text-transform: uppercase; border: 4px solid #fff; box-shadow: 0 4px 10px rgba(0,0,0,0.1);
+        }
+        .profile-big-name { font-size: 22px; font-weight: 800; color: var(--fb-text-main); margin-top: 12px; text-transform: capitalize; }
+
+        .chat-room { display: flex; flex-direction: column; height: 100%; background: var(--fb-card); position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 20; }
+        .chat-room-header { display: flex; align-items: center; padding: 14px; border-bottom: 1px solid var(--fb-border); background: #fff; gap: 12px; height: 60px; flex-shrink: 0; }
+        .chat-body { flex: 1; padding: 14px; overflow-y: auto; display: flex; flex-direction: column; gap: 10px; background: #f4f6f8; }
+        .bubble { padding: 10px 16px; border-radius: 20px; font-size: 14.5px; max-width: 75%; word-wrap: break-word; line-height: 1.4; }
+        .bubble.me { background: linear-gradient(135deg, #0084ff, #0066cc); color: white; align-self: flex-end; border-bottom-right-radius: 4px; }
+        .bubble.friend { background: #e4e6eb; color: var(--fb-text-main); align-self: flex-start; border-bottom-left-radius: 4px; }
+    </style>
+</head>
+<body>
+
+    <div class="app-container">
+        
+        <div id="loginScreen" class="auth-screen">
+            <div class="auth-logo">facebook</div>
+            <div class="form-group"><input type="text" id="loginUser" placeholder="အသုံးပြုသူအမည် (Username)"></div>
+            <div class="form-group"><input type="password" id="loginPass" placeholder="လျှို့ဝှက်နံပါတ်"></div>
+            <button class="fb-btn-blue" onclick="loginProcess()">လော့ဂ်အင်ဝင်ရန်</button>
+            <button class="fb-btn-green" onclick="showAuthScreen('registerScreen')">အကောင့်အသစ်ဆောက်ရန်</button>
+        </div>
+
+        <div id="registerScreen" class="auth-screen" style="display: none;">
+            <div class="auth-logo" style="color: var(--fb-green);">အကောင့်ဖွင့်ရန်</div>
+            <div class="form-group"><input type="text" id="regUser" placeholder="အသုံးပြုသူအမည်သစ်"></div>
+            <div class="form-group"><input type="password" id="regPass" placeholder="လျှို့ဝှက်နံပါတ်အသစ်"></div>
+            <button class="fb-btn-green" onclick="registerProcess()">အကောင့်သစ်သိမ်းမည်</button>
+            <button class="fb-btn-blue" style="background:#65676b; margin-top:10px;" onclick="showAuthScreen('loginScreen')">ပြန်ထွက်ရန်</button>
+        </div>
+
+        <div id="mainAppScreen" style="display: none; flex-direction: column; height: 100%;">
+            
+            <div class="app-header">
+                <div class="app-logo" id="headerTitle">facebook</div>
+                <button class="logout-btn" onclick="logoutProcess()">ထွက်မည်</button>
+            </div>
+
+            <div class="main-content-area" id="mainContentArea">
+                
+                <div id="view_feed" class="sub-view">
+                    <div class="create-post-shortcut" onclick="openPostCreator()">
+                        <div class="user-avatar" id="shortcutAvatar">U</div>
+                        <div class="shortcut-input">ယနေ့ ဘာတွေမျှဝေချင်လဲ... စာတင်ရန်နှိပ်ပါ။</div>
+                    </div>
+
+                    <div id="dedicatedPostBox" class="post-box-popup" style="display:none;">
+                        <div style="display:flex; justify-content:space-between; align-items:center; border-bottom:1px solid #eee; padding-bottom:8px;">
+                            <span style="font-weight:700; font-size:14px; color:var(--fb-blue);">ပို့စ်အသစ်တင်မည်</span>
+                            <button onclick="closePostCreator()" style="border:none; background:none; color:#e42645; font-weight:bold; cursor:pointer;">ပိတ်မည် ✕</button>
+                        </div>
+                        <textarea id="postInputText" placeholder="ဒီနေရာမှာ စာရိုက်ပြီး တင်လိုက်ပါ..."></textarea>
+                        <button class="fb-btn-blue" style="padding:10px; margin-top:8px; font-size:14px; border-radius:8px;" onclick="submitNewPost()">စာတင်မည် (Post)</button>
+                    </div>
+
+                    <div id="globalFeedContainer"></div>
+                </div>
+
+                <div id="view_search" class="sub-view" style="display:none;">
+                    <input type="text" class="search-field" id="searchBar" placeholder="🔍 သူငယ်ချင်းများကို နာမည်ဖြင့် ရှာဖွေရန်..." oninput="renderFindFriends()">
+                    <div style="font-size:13px; font-weight:700; color:var(--fb-text-sub); margin-bottom:12px; padding-left:4px;">အကြံပြုထားသော သူငယ်ချင်းများအားလုံး</div>
+                    <div id="searchResultContainer"></div>
+                </div>
+
+                <div id="view_chats" class="sub-view" style="display:none;">
+                    <div id="incomingRequestSection" style="background:var(--fb-light-blue); padding:14px; border-radius:12px; margin-bottom:14px; display:none; border:1px solid rgba(24,119,242,0.2);">
+                        <div style="font-size:13px; font-weight:700; color:var(--fb-blue); margin-bottom:10px;">🔔 သူငယ်ချင်းအပ်ထားသူများ (Friend Requests)</div>
+                        <div id="incomingReqList"></div>
+                    </div>
+                    
+                    <div style="font-size:15px; font-weight:700; margin-bottom:12px; color:var(--fb-text-main); padding-left:2px;">စကားပြောခန်းများ (Chats)</div>
+                    <div id="acceptedFriendsContainer"></div>
+                </div>
+
+                <div id="view_profile" class="sub-view" style="display:none;">
+                    <div class="profile-banner">
+                        <div class="profile-big-avatar" id="profViewAvatar">U</div>
+                        <div class="profile-big-name" id="profViewName">Username</div>
+                        <div id="profileUserStatus" style="font-size:13px; margin-top:8px;"></div>
+                    </div>
+                    <div style="font-weight:700; font-size:14px; margin-bottom:12px; color:var(--fb-text-sub);" id="profPostsTitle">တင်ထားသော ပို့စ်များ</div>
+                    <div id="profilePostsContainer"></div>
+                </div>
+
+            </div>
+
+            <div id="view_chat_room" class="chat-room" style="display:none;">
+                <div class="chat-room-header">
+                    <button onclick="closeChatRoom()" style="border:none; background:none; color:var(--fb-blue); font-size:22px; font-weight:bold; cursor:pointer; padding:0 6px;"> ✕ </button>
+                    <div class="user-avatar" id="chatRoomAvatar" style="width:36px; height:36px; font-size:14px;">F</div>
+                    <div style="font-weight:700; font-size:15px; flex:1;" id="chatRoomTitle">သူငယ်ချင်း နာမည်</div>
+                </div>
+                <div class="chat-body" id="chatBox"></div>
+                <div class="cmt-input-box" style="padding:12px 14px; background:#fff; border-top:1px solid var(--fb-border); flex-shrink:0;">
+                    <input type="text" id="msgInput" placeholder="Aa မက်ဆေ့ခ်ျ ရိုက်ပါ..." onkeypress="checkEnter(event)">
+                    <button class="row-btn-blue" style="padding:10px 18px; border-radius:20px;" onclick="sendMsg()">ပို့မည်</button>
+                </div>
+            </div>
+
+            <div class="bottom-nav">
+                <div class="nav-item active" id="tab_feed" onclick="switchTab('feed')">
+                    <div class="nav-icon">🏠</div><div>Feed</div>
+                </div>
+                <div class="nav-item" id="tab_search" onclick="switchTab('search')">
+                    <div class="nav-icon">👥</div><div>Friends</div>
+                </div>
+                <div class="nav-item" id="tab_chats" onclick="switchTab('chats')">
+                    <div class="nav-icon">💬</div><div>Chats</div>
+                </div>
+                <div class="nav-item" id="tab_profile" onclick="switchTab('profile')">
+                    <div class="nav-icon">👤</div><div>Profile</div>
+                </div>
+            </div>
+
+        </div>
+
+    </div>
+
+    <script>
+        let userDatabase = JSON.parse(localStorage.getItem('fb4_users')) || [];
+        let chatDatabase = JSON.parse(localStorage.getItem('fb4_chats')) || [];
+        let friendDatabase = JSON.parse(localStorage.getItem('fb4_friends')) || [];
+        let postDatabase = JSON.parse(localStorage.getItem('fb4_posts')) || [];
+        let activeSessions = JSON.parse(localStorage.getItem('fb4_sessions')) || {};
+
+        let currentActiveUser = null;
+        let currentChatFriend = null;
+        let selectedProfileUser = null;
+
+        function showAuthScreen(screenId) {
+            document.getElementById('loginScreen').style.display = "none";
+            document.getElementById('registerScreen').style.display = "none";
+            document.getElementById(screenId).style.display = "flex";
+        }
+
+        function switchTab(tabName) {
+            document.getElementById('view_feed').style.display = "none";
+            document.getElementById('view_search').style.display = "none";
+            document.getElementById('view_chats').style.display = "none";
+            document.getElementById('view_profile').style.display = "none";
+            document.getElementById('view_chat_room').style.display = "none";
+
+            document.getElementById('tab_feed').classList.remove('active');
+            document.getElementById('tab_search').classList.remove('active');
+            document.getElementById('tab_chats').classList.remove('active');
+            document.getElementById('tab_profile').classList.remove('active');
+
+            document.getElementById('view_' + tabName).style.display = "block";
+            document.getElementById('tab_' + tabName).classList.add('active');
+
+            if(tabName === 'feed') {
+                document.getElementById('headerTitle').innerText = "facebook";
+                renderGlobalFeed();
+            } else if(tabName === 'search') {
+                document.getElementById('headerTitle').innerText = "သူငယ်ချင်းများ";
+                document.getElementById('searchBar').value = "";
+                renderFindFriends();
+            } else if(tabName === 'chats') {
+                document.getElementById('headerTitle').innerText = "မက်ဆေ့ခ်ျ";
+                refreshAllData();
+            } else if(tabName === 'profile') {
+                document.getElementById('headerTitle').innerText = "ပရိုဖိုင်";
+                openUserProfile(currentActiveUser);
+            }
+        }
+
+        function openPostCreator() { document.getElementById('dedicatedPostBox').style.display = "block"; }
+        function closePostCreator() { document.getElementById('dedicatedPostBox').style.display = "none"; }
+
+        function registerProcess() {
+            const uName = document.getElementById('regUser').value.trim().toLowerCase();
+            const pWord = document.getElementById('regPass').value.trim();
+            if(!uName || !pWord) return alert("အချက်အလက်များကို ရိုက်ထည့်ပါဗျာ။");
+            if(userDatabase.some(u => u.username === uName)) return alert("ဒီနာမည် သုံးပြီးသားဖြစ်နေပါတယ်။");
+
+            userDatabase.push({ username: uName, password: pWord });
+            localStorage.setItem('fb4_users', JSON.stringify(userDatabase));
+            alert("အကောင့်ဖွင့်ခြင်း အောင်မြင်ပါပြီ။");
+            showAuthScreen('loginScreen');
+        }
+
+        function loginProcess() {
+            const uName = document.getElementById('loginUser').value.trim().toLowerCase();
+            const pWord = document.getElementById('loginPass').value.trim();
+            const found = userDatabase.find(u => u.username === uName && u.password === pWord);
+
+            if(found) {
+                currentActiveUser = uName;
+                activeSessions[uName] = Date.now();
+                localStorage.setItem('fb4_sessions', JSON.stringify(activeSessions));
+
+                document.getElementById('shortcutAvatar').innerText = uName.charAt(0);
+                document.getElementById('loginScreen').style.display = "none";
+                document.getElementById('mainAppScreen').style.display = "flex";
+                switchTab('feed');
+            } else {
+                alert("အိုင်ဒီ သို့မဟုတ် လျှို့ဝှက်နံပါတ် မှားယွင်းနေပါသည်။");
+            }
+        }
+
+        function submitNewPost() {
+            const content = document.getElementById('postInputText').value.trim();
+            if(!content) return alert("စာသားတစ်ခုခုရေးပြီးမှ တင်ပါဗျာ!");
+
+            postDatabase.push({
+                id: 'p_' + Date.now(),
+                author: currentActiveUser,
+                text: content,
+                timestamp: Date.now(),
+                likes: [],
+                comments: []
+            });
+            localStorage.setItem('fb4_posts', JSON.stringify(postDatabase));
+            document.getElementById('postInputText').value = "";
+            closePostCreator();
+            renderGlobalFeed();
+        }
+
+        function renderGlobalFeed() {
+            const container = document.getElementById('globalFeedContainer');
+            container.innerHTML = "";
+            postDatabase = JSON.parse(localStorage.getItem('fb4_posts')) || [];
+            const sortedPosts = postDatabase.sort((a,b) => b.timestamp - a.timestamp);
+
+            if(sortedPosts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:40px; color:var(--fb-text-sub); font-size:13px;">သူငယ်ချင်းများ တင်ထားသော ပို့စ်မရှိသေးပါ။</div>`;
+                return;
+            }
+            sortedPosts.forEach(post => { container.innerHTML += buildPostCardHTML(post); });
+        }
+
+        function togglePostMenu(postId) {
+            const menu = document.getElementById(`menu_${postId}`);
+            document.querySelectorAll('.menu-content').forEach(m => { if(m !== menu) m.style.display = 'none'; });
+            menu.style.display = (menu.style.display === 'block') ? 'none' : 'block';
+        }
+        
+        function toggleCommentBox(postId) {
+            const section = document.getElementById(`cmt_section_${postId}`);
+            section.style.display = (section.style.display === 'block') ? 'none' : 'block';
+        }
+
+        function deletePost(postId) {
+            if(!confirm("ဒီပို့စ်ကို ဖျက်မှာ သေချာပါသလား?")) return;
+            postDatabase = postDatabase.filter(p => p.id !== postId);
+            localStorage.setItem('fb4_posts', JSON.stringify(postDatabase));
+            updateCurrentViewContext();
+        }
+
+        function editPost(postId) {
+            const post = postDatabase.find(p => p.id === postId);
+            const newText = prompt("ပို့စ်အကြောင်းအရာကို ပြင်ဆင်ပါ:", post.text);
+            if(newText !== null && newText.trim() !== "") {
+                post.text = newText;
+                localStorage.setItem('fb4_posts', JSON.stringify(postDatabase));
+                updateCurrentViewContext();
+            }
+        }
+
+        function openUserProfile(username) {
+            selectedProfileUser = username;
+            document.getElementById('profViewName').innerText = username;
+            document.getElementById('profViewAvatar').innerText = username.charAt(0);
+            
+            const isOnline = (Date.now() - (activeSessions[username] || 0)) < 180000;
+            document.getElementById('profileUserStatus').innerHTML = isOnline ? `<span style="color:var(--fb-green); font-weight:bold;">🟢 Online ရောက်နေသည်</span>` : `<span style="color:var(--fb-text-sub);">⚫ Offline ဖြစ်နေသည်</span>`;
+            document.getElementById('profPostsTitle').innerText = `${username} တင်ထားသော ပို့စ်များ`;
+
+            const container = document.getElementById('profilePostsContainer');
+            container.innerHTML = ""; 
+
+            postDatabase = JSON.parse(localStorage.getItem('fb4_posts')) || [];
+            const myPosts = postDatabase.filter(p => p.author === username).sort((a,b) => b.timestamp - a.timestamp);
+
+            if(myPosts.length === 0) {
+                container.innerHTML = `<div style="text-align:center; padding:20px; color:var(--fb-text-sub); font-size:13px;">တင်ထားသော ပို့စ်မရှိသေးပါ။</div>`;
+            } else {
+                myPosts.forEach(post => { container.innerHTML += buildPostCardHTML(post); });
+            }
+            
+            document.getElementById('view_feed').style.display = "none";
+            document.getElementById('view_search').style.display = "none";
+            document.getElementById('view_chats').style.display = "none";
+            document.getElementById('view_profile').style.display = "block";
+            
+            document.getElementById('tab_feed').classList.remove('active');
+            document.getElementById('tab_search').classList.remove('active');
+            document.getElementById('tab_chats').classList.remove('active');
+            document.getElementById('tab_profile').classList.add('active');
+        }
+
+        function buildPostCardHTML(post) {
+            const likes = post.likes || [];
+            const comments = post.comments || [];
+            const hasLiked = likes.includes(currentActiveUser);
+
+            let menuHTML = "";
+            if (post.author === currentActiveUser) {
+                menuHTML = `
+                    <div class="menu-container">
+                        <div class="menu-btn" onclick="togglePostMenu('${post.id}')">⋯</div>
+                        <div id="menu_${post.id}" class="menu-content">
+                            <div class="menu-item" onclick="editPost('${post.id}')">✏️ ပြင်ဆင်မည်</div>
+                            <div class="menu-item" style="color:red;" onclick="deletePost('${post.id}')">🗑️ ဖျက်မည်</div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            let cmtHTML = "";
+            comments.forEach(c => {
+                cmtHTML += `<div class="cmt-item"><span class="cmt-user">${c.author}:</span><span>${c.text}</span></div>`;
+            });
+
+            return `
+                <div class="post-card">
+                    <div class="post-header">
+                        <div style="display:flex; align-items:center; gap:10px;">
+                            <div class="user-avatar">${post.author.charAt(0)}</div>
+                            <div>
+                                <div class="author-name" onclick="openUserProfile('${post.author}')">${post.author}</div>
+                                <div class="post-time">${new Date(post.timestamp).toLocaleString()}</div>
+                            </div>
+                        </div>
+                        ${menuHTML}
+                    </div>
+                    <div class="post-text">${post.text}</div>
+                    <div class="card-actions">
+                        <button class="action-button ${hasLiked?'liked':''}" onclick="likePostAction('${post.id}')">❤️ Like (${likes.length})</button>
+                        <button class="action-button" onclick="toggleCommentBox('${post.id}')">💬 Comment (${comments.length})</button>
+                    </div>
+                    
+                    <div id="cmt_section_${post.id}" class="cmt-section">
+                        <div class="cmt-wrapper">
+                            <div>${cmtHTML}</div>
+                            <div class="cmt-input-box">
+                                <input type="text" id="input_cmt_${post.id}" placeholder="ကော်မန့်ရေးရန်...">
+                                <button class="row-btn-blue" style="padding:6px 12px; font-size:12px; border-radius:14px;" onclick="commentPostAction('${post.id}')">ရေးမည်</button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        function likePostAction(postId) {
+            postDatabase = JSON.parse(localStorage.getItem('fb4_posts')) || [];
+            const post = postDatabase.find(p => p.id === postId);
+            if(!post) return;
+            if(!post.likes) post.likes = [];
+            
+            const idx = post.likes.indexOf(currentActiveUser);
+            if(idx === -1) post.likes.push(currentActiveUser);
+            else post.likes.splice(idx, 1);
+
+            localStorage.setItem('fb4_posts', JSON.stringify(postDatabase));
+            updateCurrentViewContext();
+        }
+
+        function commentPostAction(postId) {
+            const inp = document.getElementById(`input_cmt_${postId}`);
+            const val = inp.value.trim();
+            if(!val) return;
+
+            postDatabase = JSON.parse(localStorage.getItem('fb4_posts')) || [];
+            const post = postDatabase.find(p => p.id === postId);
+            if(!post) return;
+            if(!post.comments) post.comments = [];
+
+            post.comments.push({ author: currentActiveUser, text: val, timestamp: Date.now() });
+            localStorage.setItem('fb4_posts', JSON.stringify(postDatabase));
+            inp.value = "";
+            updateCurrentViewContext();
+        }
+
+        function updateCurrentViewContext() {
+            if(document.getElementById('view_feed').style.display === "block") renderGlobalFeed();
+            if(document.getElementById('view_profile').style.display === "block") openUserProfile(selectedProfileUser);
+        }
+
+        function renderFindFriends() {
+            const container = document.getElementById('searchResultContainer');
+            const searchVal = document.getElementById('searchBar').value.trim().toLowerCase();
+            container.innerHTML = "";
+
+            userDatabase = JSON.parse(localStorage.getItem('fb4_users')) || [];
+            friendDatabase = JSON.parse(localStorage.getItem('fb4_friends')) || [];
+
+            let allOtherUsers = userDatabase.filter(u => u.username !== currentActiveUser);
+
+            if (searchVal !== "") {
+                allOtherUsers = allOtherUsers.filter(u => u.username.includes(searchVal));
+            }
+
+            if(allOtherUsers.length === 0) {
+                container.innerHTML = `<div style="text-align:center; color:var(--fb-text-sub); padding:20px; font-size:13px;">အသုံးပြုသူ ရှာမတွေ့ပါ။</div>`;
+                return;
+            }
+
+            allOtherUsers.forEach(u => {
+                const rel = friendDatabase.find(f => (f.from === currentActiveUser && f.to === u.username) || (f.from === u.username && f.to === currentActiveUser));
+                let actionBtn = "";
+
+                if (!rel) {
+                    actionBtn = `<button class="row-btn-blue" onclick="sendFriendRequest('${u.username}')">Friends အပ်မည်</button>`;
+                } else if (rel.status === 'pending') {
+                    actionBtn = rel.from === currentActiveUser ? 
+                        `<button class="row-btn-gray" style="cursor:default;" disabled>Requested</button>` : 
+                        `<button class="row-btn-green" onclick="acceptFriendRequest('${rel.from}')">လက်ခံမည်</button>`;
+                } else if (rel.status === 'accepted') {
+                    actionBtn = `<span style="color:var(--fb-green); font-weight:bold; font-size:13px;">🟢 Friends ဖြစ်ပြီး</span>`;
+                }
+
+                container.innerHTML += `
+                    <div class="item-row">
+                        <div class="row-info" onclick="openUserProfile('${u.username}')">
+                            <div class="user-avatar" style="background: var(--fb-blue);">${u.username.charAt(0)}</div>
+                            <span class="row-name">${u.username}</span>
+                        </div>
+                        <div>${actionBtn}</div>
+                    </div>
+                `;
+            });
+        }
+
+        function sendFriendRequest(toUser) {
+            friendDatabase = JSON.parse(localStorage.getItem('fb4_friends')) || [];
+            friendDatabase.push({ from: currentActiveUser, to: toUser, status: 'pending' });
+            localStorage.setItem('fb4_friends', JSON.stringify(friendDatabase));
+            renderFindFriends();
+        }
+
+        function acceptFriendRequest(fromUser) {
+            friendDatabase = JSON.parse(localStorage.getItem('fb4_friends')) || [];
+            const rel = friendDatabase.find(f => f.from === fromUser && f.to === currentActiveUser);
+            if(rel) {
+                rel.status = 'accepted';
+                localStorage.setItem('fb4_friends', JSON.stringify(friendDatabase));
+                refreshAllData();
+                renderFindFriends();
+            }
+        }
+
+        function refreshAllData() {
+            if(!currentActiveUser) return;
+            activeSessions[currentActiveUser] = Date.now();
+            localStorage.setItem('fb4_sessions', JSON.stringify(activeSessions));
+            friendDatabase = JSON.parse(localStorage.getItem('fb4_friends')) || [];
+
+            const inc = friendDatabase.filter(f => f.to === currentActiveUser && f.status === 'pending');
+            const sec = document.getElementById('incomingRequestSection');
+            const list = document.getElementById('incomingReqList');
+            list.innerHTML = "";
+            if(inc.length > 0) {
+                sec.style.display = "block";
+                inc.forEach(r => {
+                    list.innerHTML += `
+                        <div class="item-row" style="background:#f4f7f6; margin-bottom:4px; padding:10px;">
+                            <span style="font-weight:700; font-size:13px;">${r.from}</span>
+                            <button class="row-btn-green" style="padding:6px 12px; font-size:12px;" onclick="acceptFriendRequest('${r.from}')">လက်ခံမည်</button>
+                        </div>`;
+                });
+            } else { sec.style.display = "none"; }
+
+            const myFriends = friendDatabase.filter(f => f.status === 'accepted' && (f.from === currentActiveUser || f.to === currentActiveUser));
+            const fContainer = document.getElementById('acceptedFriendsContainer');
+            fContainer.innerHTML = "";
+
+            if(myFriends.length === 0) {
+                fContainer.innerHTML = `
+                    <div style="text-align:center; color:var(--fb-text-sub); padding:30px; font-size:13px; background:#fff; border-radius:12px;">
+                        မက်ဆေ့ခ်ျပို့ရန် သူငယ်ချင်းမရှိသေးပါ။<br>
+                        <span style="color:var(--fb-blue); cursor:pointer; font-weight:bold;" onclick="switchTab('search')">Friends Tab</span> မှာ အရင်သွားအပ်ပေးပါ။
+                    </div>`;
+                return;
+            }
+
+            myFriends.forEach(rel => {
+                const fName = rel.from === currentActiveUser ? rel.to : rel.from;
+                fContainer.innerHTML += `
+                    <div class="item-row">
+                        <div class="row-info" onclick="openUserProfile('${fName}')">
+                            <div class="user-avatar" style="background:#555;">${fName.charAt(0)}</div>
+                            <span class="row-name">${fName}</span>
+                        </div>
+                        <button class="row-btn-blue" style="background:var(--fb-light-blue); color:var(--fb-blue); border:none;" onclick="openChatRoom('${fName}')">စာရေးရန် 💬</button>
+                    </div>
+                `;
+            });
+
+            if(document.getElementById('view_chat_room').style.display === "flex") renderMessages();
+        }
+
+        function openChatRoom(friendName) {
+            currentChatFriend = friendName;
+            document.getElementById('chatRoomTitle').innerText = friendName;
+            document.getElementById('chatRoomAvatar').innerText = friendName.charAt(0);
+            document.getElementById('view_chat_room').style.display = "flex";
+            renderMessages(true);
+        }
+
+        function closeChatRoom() { document.getElementById('view_chat_room').style.display = "none"; currentChatFriend = null; }
+
+        function sendMsg() {
+            const inp = document.getElementById('msgInput'); const txt = inp.value.trim(); if(!txt) return;
+            chatDatabase = JSON.parse(localStorage.getItem('fb4_chats')) || [];
+            chatDatabase.push({ sender: currentActiveUser, receiver: currentChatFriend, text: txt, timestamp: Date.now() });
+            localStorage.setItem('fb4_chats', JSON.stringify(chatDatabase));
+            inp.value = ""; renderMessages(true);
+        }
+
+        function renderMessages(scroll = false) {
+            const box = document.getElementById('chatBox'); box.innerHTML = "";
+            chatDatabase = JSON.parse(localStorage.getItem('fb4_chats')) || [];
+            const msgs = chatDatabase.filter(m => (m.sender === currentActiveUser && m.receiver === currentChatFriend) || (m.sender === currentChatFriend && m.receiver === currentActiveUser));
+            msgs.forEach(m => {
+                const isMe = m.sender === currentActiveUser;
+                box.innerHTML += `<div class="bubble ${isMe?'me':'friend'}">${m.text}</div>`;
+            });
+            if(scroll) box.scrollTop = box.scrollHeight;
+        }
+
+        function checkEnter(e) { if(e.key === 'Enter') sendMsg(); }
+        function logoutProcess() { activeSessions[currentActiveUser] = 0; localStorage.setItem('fb4_sessions', JSON.stringify(activeSessions)); currentActiveUser = null; document.getElementById('mainAppScreen').style.display = "none"; showAuthScreen('loginScreen'); }
+
+        window.addEventListener('storage', () => { refreshAllData(); updateCurrentViewContext(); if(document.getElementById('view_search').style.display === "block") renderFindFriends(); });
+        setInterval(() => { if(currentActiveUser) refreshAllData(); }, 3000);
+    </script>
+</body>
+</html>
